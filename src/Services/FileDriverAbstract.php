@@ -4,7 +4,6 @@ namespace Harrison\LaravelFileManager\Services;
 
 use Harrison\LaravelFileManager\Models\ValueObjects\FileInfo;
 use Illuminate\Contracts\Filesystem\Filesystem;
-use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -18,6 +17,8 @@ abstract class FileDriverAbstract
     private Filesystem $filesystem;
 
     protected string $filesystemDriver = '';
+
+    protected string $subDir = '';
 
     public function getFilesystemDriver(): string
     {
@@ -34,6 +35,7 @@ abstract class FileDriverAbstract
 
     /**
      * 上傳目錄建立規則
+     * @param array $folder 子目錄名稱
      */
     abstract public function getUploadPath(): string;
 
@@ -42,6 +44,22 @@ abstract class FileDriverAbstract
      * 不想要自動產生檔案名稱時回傳 null
      */
     abstract public function generateFileName(): ?string;
+
+    /**
+     * 設定子目錄規則
+     */
+    public function setSubDir(array $subDir = []): void
+    {
+        $this->subDir = implode('/', $subDir);
+    }
+
+    /**
+     * 取回子目錄
+     */
+    public function getSubDir(): string 
+    {
+        return $this->subDir;
+    }
 
     /**
      * 檔案 uuid 產生規則
@@ -115,8 +133,13 @@ abstract class FileDriverAbstract
      */
     public function getDirPath(): string
     {
-        // 取得 storage root path
+        // 取得上傳檔案 root path
         $dirPath = $this->getUploadPath();
+
+        // 加上子目錄
+        if (!empty($this->getSubDir())) {
+            $dirPath .= '/' . $this->getSubDir();
+        }
 
         try {
             // 沒有對應目錄新增目錄
