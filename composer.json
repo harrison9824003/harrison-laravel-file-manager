@@ -1,0 +1,15 @@
+{
+    "name": "harrison/harrison-laravel-file-manager",
+    "autoload": {
+        "psr-4": {
+            "Harrison\\HarrisonLaravelFileManager\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "harrison9824003",
+            "email": "harrison9284003@gamil.com.tw"
+        }
+    ],
+    "require": {}
+}
